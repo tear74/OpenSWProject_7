@@ -7,7 +7,7 @@ import java.sql.SQLException;
 
 public class DBconnect {
     public static final String databaseDriver = "com.mysql.cj.jdbc.Driver";
-    public static final String databaseUrl = "jdbc:mysql://localhost:3306/ticket?serverTimezone=UTC"; // 데이터베이스 이름이 ticket
+    public static final String databaseUrl = "jdbc:mysql://localhost:3306/WEchATHER?serverTimezone=UTC"; // 데이터베이스 이름이 ticket
     public static final String databaseUser = "root";
     public static final String databasePassword = "1345"; // 데이터베이스 서버 비밀번호
     public static Connection connection = null;
