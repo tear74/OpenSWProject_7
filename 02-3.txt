@@ -1,3 +1,0 @@
-<button id="getWeatherButton">날씨 현황</button>
-
-<div id="weatherResult"></div>
