@@ -1,0 +1,151 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+
+public class WeatherApp {
+
+    private static JFrame frame;
+    private static JPanel mainPanel;
+    private static CardLayout cardLayout;
+    private static JLabel selectedDateLabel;
+    private static JLabel selectedTimeLabel;
+    private static LocalDate selectedDate;
+    private static LocalTime selectedTime;
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            frame = new JFrame("Weather Application");
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setSize(400, 300);
+
+            cardLayout = new CardLayout();
+            mainPanel = new JPanel(cardLayout);
+
+            mainPanel.add(createSchoolSelectionPanel(), "SchoolSelection");
+            mainPanel.add(createDateTimeSelectionPanel(), "DateTimeSelection");
+
+            frame.add(mainPanel);
+            frame.setVisible(true);
+        });
+    }
+
+    // 학교 선택 패널 생성
+    private static JPanel createSchoolSelectionPanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+
+        JLabel label = new JLabel("학교를 선택하세요", SwingConstants.CENTER);
+        panel.add(label, BorderLayout.NORTH);
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new GridLayout(0, 1));
+
+        List<String> schoolList = new ArrayList<>();
+        schoolList.add("선문대학교");
+        schoolList.add("충북대학교");
+        schoolList.add("유원대학교");
+        schoolList.add("충남대학교");
+        schoolList.add("순천향대학교");
+
+        for (String school : schoolList) {
+            JButton button = new JButton(school);
+            button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    // 학교 버튼 클릭 시 날짜 및 시간 선택 패널로 이동
+                    cardLayout.show(mainPanel, "DateTimeSelection");
+                }
+            });
+            buttonPanel.add(button);
+        }
+
+        panel.add(buttonPanel, BorderLayout.CENTER);
+        return panel;
+    }
+
+    // 날짜 및 시간 선택 패널 생성
+    private static JPanel createDateTimeSelectionPanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+
+        JLabel label = new JLabel("날짜와 시간을 선택하세요", SwingConstants.CENTER);
+        panel.add(label, BorderLayout.NORTH);
+
+        JPanel dateTimePanel = new JPanel();
+        dateTimePanel.setLayout(new GridLayout(3, 2));
+
+        JButton dateButton = new JButton("날짜 선택");
+        selectedDateLabel = new JLabel("선택된 날짜: 없음", SwingConstants.CENTER);
+        dateButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                selectedDate = selectDate();
+                if (selectedDate != null) {
+                    selectedDateLabel.setText("선택된 날짜: " + selectedDate.toString());
+                }
+            }
+        });
+
+        JButton timeButton = new JButton("시간 선택");
+        selectedTimeLabel = new JLabel("선택된 시간: 없음", SwingConstants.CENTER);
+        timeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                selectedTime = selectTime();
+                if (selectedTime != null) {
+                    selectedTimeLabel.setText("선택된 시간: " + selectedTime.format(DateTimeFormatter.ofPattern("HH:mm")));
+                }
+            }
+        });
+
+        dateTimePanel.add(new JLabel("날짜:"));
+        dateTimePanel.add(dateButton);
+        dateTimePanel.add(selectedDateLabel);
+        dateTimePanel.add(new JLabel("시간:"));
+        dateTimePanel.add(timeButton);
+        dateTimePanel.add(selectedTimeLabel);
+
+        panel.add(dateTimePanel, BorderLayout.CENTER);
+
+        JButton submitButton = new JButton("제출");
+        submitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (selectedDate != null && selectedTime != null) {
+                    String date = selectedDate.toString();
+                    String time = selectedTime.format(DateTimeFormatter.ofPattern("HH:mm"));
+                    JOptionPane.showMessageDialog(frame, "선택한 날짜: " + date + "\n선택한 시간: " + time);
+                } else {
+                    JOptionPane.showMessageDialog(frame, "날짜와 시간을 모두 선택하세요.");
+                }
+            }
+        });
+
+        panel.add(submitButton, BorderLayout.SOUTH);
+        return panel;
+    }
+
+    private static LocalDate selectDate() {
+        String dateStr = JOptionPane.showInputDialog(frame, "날짜를 입력하세요 (YYYY-MM-DD):");
+        try {
+            return LocalDate.parse(dateStr);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(frame, "잘못된 날짜 형식입니다. 다시 입력하세요.");
+            return null;
+        }
+    }
+
+    private static LocalTime selectTime() {
+        String timeStr = JOptionPane.showInputDialog(frame, "시간을 입력하세요 (HH:MM):");
+        try {
+            return LocalTime.parse(timeStr);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(frame, "잘못된 시간 형식입니다. 다시 입력하세요.");
+            return null;
+        }
+    }
+}
