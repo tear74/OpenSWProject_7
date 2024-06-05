@@ -6,9 +6,9 @@ import java.sql.ResultSet;
 
 import javax.swing.JOptionPane;
 
-public class DBmem {									// DB 테이블 member에 관한 메소드
+public class DBmem {									// DB 테이블 member 에 관한 메소드
 	
-	public boolean register(String ID, String PW, String Nick, String email) { // 회원가입 메소드
+	public boolean register(String ID, String PW, String nick, String email) { // 회원가입 메소드
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		String sql = "INSERT INTO member VALUES (?, ?, ?, ?)";
@@ -19,13 +19,13 @@ public class DBmem {									// DB 테이블 member에 관한 메소드
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, ID);
 			pstmt.setString(2, PW);
-			pstmt.setString(3, Nick);
+			pstmt.setString(3, nick);
 			pstmt.setString(4, email);
 
-			int r = pstmt.executeUpdate(); 				// 생성 성공시(만들어진 row들) 값을 받음(없을시 0)
+			int r = pstmt.executeUpdate(); 				// 생성 성공시(만들어진 row 들) 값을 받음(없을시 0)
 			System.out.println("return result = " + r); // 콘솔 체크용
 			
-			if (r > 0) { 								// 생성된 row가 있을 때
+			if (r > 0) { 								// 생성된 row 가 있을 때
 				result = true; 							// true 반환
 			}
 			
@@ -85,8 +85,8 @@ public class DBmem {									// DB 테이블 member에 관한 메소드
             
             rs = pstmt.executeQuery();
             
-            while(rs.next()) {							// 다음 행이 존재하는 한 반복
-	            if(PW.equals(rs.getString("member_PW")) == true) { // 입력받은 PW와 일치하는지 확인
+            while(rs.next()) {										// 다음 행이 존재하는 한 반복
+	            if(PW.equals(rs.getString("member_PW")) == true) { 	// 입력받은 PW와 일치하는지 확인
 	                result = true;
 	            }	            
 	            else {
@@ -104,14 +104,14 @@ public class DBmem {									// DB 테이블 member에 관한 메소드
             
         }
         
-        if (result == false && exist == 0) {			// 아이디가 존재하지 않을 시
+        if (result == false && exist == 0) {					// 아이디가 존재하지 않을 시
         	JOptionPane.showMessageDialog(null, "존재하지 않는 아이디입니다.", "알림!", JOptionPane.WARNING_MESSAGE);
         }
         
         return result;
 	}
 	
-	public boolean deleteMember(String ID) { 	// 회원 탈퇴 메소드
+	public boolean deleteMember(String ID) { 					// 회원 탈퇴 메소드
 		Connection conn = null;
         PreparedStatement pstmt = null;
         Boolean result = false;
@@ -141,6 +141,5 @@ public class DBmem {									// DB 테이블 member에 관한 메소드
 
 	return result;
 	}
-
 	
 }
