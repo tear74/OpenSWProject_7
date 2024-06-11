@@ -1,0 +1,27 @@
+void getWeatherUpdate() {
+  Location loc = getLocation();
+  if (WiFi.status() == WL_CONNECTED) {
+    HTTPClient http;
+    String weatherURL = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtFcst";
+    weatherURL += "?serviceKey=" + String(apiKey);
+    weatherURL += "&numOfRows=60&pageNo=1&base_date=" + getCurrentDate();
+    weatherURL += "&base_time=0630&nx=" + String(loc.nx) + "&ny=" + String(loc.ny);
+    weatherURL += "&dataType=JSON"; // JSON 형식으로 요청
+
+    http.begin(weatherURL);
+    int httpCode = http.GET();
+
+    if (httpCode > 0) {
+      String payload = http.getString();
+      Serial.println("Weather Data: ");
+      
+      // 특수문자 및 따옴표 제거 및 줄바꿈 출력
+      String formattedPayload = formatPayload(payload);
+      Serial.println(formattedPayload);
+    } else {
+      Serial.print("Error on HTTP request: ");
+      Serial.println(httpCode);
+    }
+    http.end();
+  }
+}
