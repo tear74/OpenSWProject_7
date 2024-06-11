@@ -3,11 +3,12 @@ package DB;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class DBcmt {												// DB 테이블 comment 에 관한 메소드
 	
-	public void insertCmt(String nick, String chat, String date) {	// 코멘트 입력
+	public void insertCmt(String nick, String chat) {	// 코멘트 입력
 		Connection conn = null;
 	    PreparedStatement pstmt = null;
 	    
@@ -19,7 +20,7 @@ public class DBcmt {												// DB 테이블 comment 에 관한 메소드
 
 	        pstmt.setString(1, nick);
 	        pstmt.setString(2, chat);
-	        pstmt.setString(3, date);
+	        pstmt.setDate(3, java.sql.Date.valueOf(LocalDate.now()));
 	        
 	        int r = pstmt.executeUpdate();
 	        
@@ -39,6 +40,8 @@ public class DBcmt {												// DB 테이블 comment 에 관한 메소드
 	    PreparedStatement pstmt = null;
 	    ResultSet rs;
 	    
+	    java.sql.Date d = java.sql.Date.valueOf(date);		// 전달받은 date의 자료형을 변환
+	    
 	    String nick, script;
 	    
 	    String sql = "SELECT * from comment where cmt_Date = ?";// 특정 날짜의 코멘트들을 불러오는 sql문
@@ -49,7 +52,7 @@ public class DBcmt {												// DB 테이블 comment 에 관한 메소드
 	        conn = DBconnect.connect();
 	        pstmt = conn.prepareStatement(sql);
 	        
-	        pstmt.setString(1, date);
+	        pstmt.setDate(1, d);
 	        
 	        rs = pstmt.executeQuery();   
 	        

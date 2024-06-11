@@ -3,11 +3,13 @@ package DB;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.time.LocalDate;
 
 public class DBcrtW {												// DB 테이블 currentWeather에 관한 메소드
-	public void insertCrtW(String nick, int type, String date) {	// 현재 날씨 아이콘 클릭 시 정보 추가 
+	public void insertCrtW(String nick, int type) {	// 현재 날씨 아이콘 클릭 시 정보 추가 
 		Connection conn = null;
 	    PreparedStatement pstmt = null;
+	    
 	    
 	    String sql = "INSERT INTO currentWeather VALUES (0, ?, ?, ?)";
 	    
@@ -17,7 +19,7 @@ public class DBcrtW {												// DB 테이블 currentWeather에 관한 메소
 
 	        pstmt.setString(1, nick);
 	        pstmt.setInt(2, type);
-	        pstmt.setString(3, date);
+	        pstmt.setDate(3, java.sql.Date.valueOf(LocalDate.now()));
 	        
 	        int r = pstmt.executeUpdate();
 	        
@@ -32,11 +34,12 @@ public class DBcrtW {												// DB 테이블 currentWeather에 관한 메소
 	    }
 	}
 	
-	public int[] getCrtW(String date) {						// DB에서 아이콘 현황을 불러오는 메소드
+	public int[] getCrtW(String date) {						// DB에서 아이콘 현황을 불러오는 메소드, date는 "YYYY-MM-DD"형식일것
 		Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         
+        java.sql.Date d = java.sql.Date.valueOf(date);		// 전달받은 date의 자료형을 변환
 
         int[] result = {0, 0, 0, 0, 0, 0};					// 아이콘은 몇가지?
         int i;        
@@ -46,7 +49,7 @@ public class DBcrtW {												// DB 테이블 currentWeather에 관한 메소
             conn = DBconnect.connect();
             pstmt = conn.prepareStatement(sql);  
             
-            pstmt.setString(1, date);
+            pstmt.setDate(1, d);
             
             rs = pstmt.executeQuery();
             
@@ -74,6 +77,8 @@ public class DBcrtW {												// DB 테이블 currentWeather에 관한 메소
         PreparedStatement pstmt = null;
         Boolean result = false;
 
+        java.sql.Date d = java.sql.Date.valueOf(date);		// 전달받은 date의 자료형을 변환        java.sql.Date d = java.sql.Date.valueOf(date);
+        
         String del = "DELETE FROM currentWeather WHERE member_Nick = ? AND crtW_Date = ?";	// 닉네임과 날짜를 통해 레코드를 찾음
 
         
@@ -81,7 +86,7 @@ public class DBcrtW {												// DB 테이블 currentWeather에 관한 메소
             conn = DBconnect.connect();
             pstmt = conn.prepareStatement(del);            
             pstmt.setString(1, nick); 
-            pstmt.setString(2, date);
+            pstmt.setDate(2, d);
             
 			int r = pstmt.executeUpdate();
 			

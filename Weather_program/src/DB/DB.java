@@ -1,7 +1,9 @@
 package DB;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -12,7 +14,27 @@ public class DB {										// 전반적인 DB 메소드
 	public void creationTable() {						// 프로그램 실행 초기 테이블 생성 메소드
 		Connection conn = null;
 		PreparedStatement pstmt = null;
-		// 추후 DB 테이블 존재 유무를 검사하는 코드 추가
+		
+		try {
+			conn = DBconnect.connect();	
+			DatabaseMetaData metadata = conn.getMetaData();
+			ResultSet resultSet;
+			resultSet = metadata.getTables(null, null, "currentWeather", null);
+			if(resultSet.next()) {
+				DBconnect.close();
+				return;
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			
+		} finally {
+			DBconnect.close();
+			
+		}
+
+		
+		// DB 테이블 존재 유무를 검사하는 코드
 		String sql = "CREATE TABLE member ("			
 				+ "member_ID    VARCHAR(20) PRIMARY KEY,"
 				+ "member_PW    VARCHAR(20) NOT NULL,"
@@ -20,9 +42,7 @@ public class DB {										// 전반적인 DB 메소드
 				+ "member_Email VARCHAR(30) NOT NULL,"
 				+ "UNIQUE KEY unique_nick (member_Nick)"
 				+ ")";
-		
-		
-		// DB에서 생성할 사용자 테이블
+		// DB에서 생성할 회원정보 테이블
 
 		try {
 			conn = DBconnect.connect();
@@ -41,7 +61,7 @@ public class DB {										// 전반적인 DB 메소드
 				+ "cmt_NO   	 INT AUTO_INCREMENT PRIMARY KEY,"	// 고유번호
 				+ "member_Nick   VARCHAR(20),"						// 코멘트를 작성한 사람의 닉네임
 				+ "cmt_Content	 VARCHAR(30) NOT NULL,"				// 댓글 내용
-				+ "cmt_Date		 VARCHAR(30) NOT NULL,"				// 댓글 날짜
+				+ "cmt_Date		 DATE		 NOT NULL,"				// 댓글 날짜
 				+ "CONSTRAINT fk_comment_nick FOREIGN KEY (member_Nick)"
 				+ "			  REFERENCES member (member_Nick)"
 				+ ")"; 				
@@ -64,7 +84,7 @@ public class DB {										// 전반적인 DB 메소드
 				+ "crtW_NO  	 INT AUTO_INCREMENT PRIMARY KEY,"	// 고유번호
 				+ "member_Nick   VARCHAR(20),"						// 아이콘을 누른 사람의 닉네임
 				+ "crtW_Type 	 INT			NOT NULL,"			// 아이콘 타입
-				+ "crtW_Date 	 VARCHAR(30)	NOT NULL," 			// 날짜
+				+ "crtW_Date 	 DATE			NOT NULL," 			// 날짜
 				+ "CONSTRAINT fk_weather_nick FOREIGN KEY (member_Nick)"
 				+ "			  REFERENCES member (member_Nick)"
 				+ ")"; 
