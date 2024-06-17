@@ -8,10 +8,10 @@ import javax.swing.JOptionPane;
 
 public class DBmem {									// DB 테이블 member 에 관한 메소드
 	
-	public boolean register(String ID, String PW, String nick, String email) { // 회원가입 메소드
+	public boolean register(String ID, String PW, String nick, String email, String univ) { // 회원가입 메소드
 		Connection conn = null;
 		PreparedStatement pstmt = null;
-		String sql = "INSERT INTO member VALUES (?, ?, ?, ?)";
+		String sql = "INSERT INTO member VALUES (?, ?, ?, ?, ?)";
 		boolean result = false;
 
 		try {
@@ -21,10 +21,11 @@ public class DBmem {									// DB 테이블 member 에 관한 메소드
 			pstmt.setString(2, PW);
 			pstmt.setString(3, nick);
 			pstmt.setString(4, email);
+			pstmt.setString(5, univ);
 
 			int r = pstmt.executeUpdate(); 				// 생성 성공시(만들어진 row 들) 값을 받음(없을시 0)
 			System.out.println("return result = " + r); // 콘솔 체크용
-			
+            			
 			if (r > 0) { 								// 생성된 row 가 있을 때
 				result = true; 							// true 반환
 			}
@@ -88,9 +89,11 @@ public class DBmem {									// DB 테이블 member 에 관한 메소드
             while(rs.next()) {										// 다음 행이 존재하는 한 반복
 	            if(PW.equals(rs.getString("member_PW")) == true) { 	// 입력받은 PW와 일치하는지 확인
 	                result = true;
+	                System.out.println("와성공");			// 콘솔 확인용
 	            }	            
 	            else {
 	                exist++;	
+	                System.out.println("ㅠㅠㅠㅠ");			// 콘솔 확인용
 	                JOptionPane.showMessageDialog(null, "비밀번호가 일치하지 않습니다.", "알림!", JOptionPane.WARNING_MESSAGE);
 	                // 불일치시 경고메세지 출력
 	            }	            
@@ -105,6 +108,7 @@ public class DBmem {									// DB 테이블 member 에 관한 메소드
         }
         
         if (result == false && exist == 0) {					// 아이디가 존재하지 않을 시
+        	System.out.println("존재하지않습니다");					// 콘솔 확인용
         	JOptionPane.showMessageDialog(null, "존재하지 않는 아이디입니다.", "알림!", JOptionPane.WARNING_MESSAGE);
         }
         
@@ -127,7 +131,7 @@ public class DBmem {									// DB 테이블 member 에 관한 메소드
 			int r = pstmt.executeUpdate();
 			
 			if (r > 0) {
-				System.out.println("Delete Successed");
+				System.out.println("mem Delete Successed");
 				result = true;
 			}
 

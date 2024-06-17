@@ -8,11 +8,11 @@ import java.util.ArrayList;
 
 public class DBcmt {												// DB 테이블 comment 에 관한 메소드
 	
-	public void insertCmt(String nick, String chat) {	// 코멘트 입력
+	public void insertCmt(String nick, String chat, String univ) {	// 코멘트 입력
 		Connection conn = null;
 	    PreparedStatement pstmt = null;
 	    
-	    String sql = "INSERT INTO comment (`cmt_NO`, `member_Nick`, `cmt_Content`, `cmt_Date`) VALUES (0, ?, ?, ?)";
+	    String sql = "INSERT INTO comment (`cmt_NO`, `member_Nick`, `cmt_Content`, `cmt_Date`, `member_Univ`) VALUES (0, ?, ?, ?, ?)";
 	    
 	    try {
 	        conn = DBconnect.connect();
@@ -21,6 +21,7 @@ public class DBcmt {												// DB 테이블 comment 에 관한 메소드
 	        pstmt.setString(1, nick);
 	        pstmt.setString(2, chat);
 	        pstmt.setDate(3, java.sql.Date.valueOf(LocalDate.now()));
+	        pstmt.setString(4, univ);
 	        
 	        int r = pstmt.executeUpdate();
 	        
@@ -35,7 +36,7 @@ public class DBcmt {												// DB 테이블 comment 에 관한 메소드
 	    }
 	}
 
-	public ArrayList<String> getCmt(String date) {				// DB에서 채팅을 불러옴
+	public ArrayList<String> getCmt(String date, String univ) {				// DB에서 채팅을 불러옴
 		Connection conn = null;
 	    PreparedStatement pstmt = null;
 	    ResultSet rs;
@@ -44,7 +45,7 @@ public class DBcmt {												// DB 테이블 comment 에 관한 메소드
 	    
 	    String nick, script;
 	    
-	    String sql = "SELECT * from comment where cmt_Date = ?";// 특정 날짜의 코멘트들을 불러오는 sql문
+	    String sql = "SELECT * from comment where cmt_Date = ? and member_Univ = ?";// 특정 날짜의 코멘트들을 불러오는 sql문
 	    
 	    ArrayList<String> result = new ArrayList<>();
 	    
@@ -53,6 +54,7 @@ public class DBcmt {												// DB 테이블 comment 에 관한 메소드
 	        pstmt = conn.prepareStatement(sql);
 	        
 	        pstmt.setDate(1, d);
+	        pstmt.setString(2, univ);
 	        
 	        rs = pstmt.executeQuery();   
 	        
@@ -61,7 +63,7 @@ public class DBcmt {												// DB 테이블 comment 에 관한 메소드
 	        	script = rs.getString("cmt_Content");   
 	        	
 	            result.add(nick + ": " + script);
-	            System.out.println(result);
+	            System.out.println(result);			// 콘솔 확인용
 	        }
 	        
 	    } catch (Exception e) {
@@ -74,7 +76,7 @@ public class DBcmt {												// DB 테이블 comment 에 관한 메소드
 	    return result;
 	}
 	
-	public boolean deleteCmt(int num) { 						// 코멘트 삭제메소드
+	public boolean deleteCmt(int num, String univ) { 						// 코멘트 삭제메소드
 		Connection conn = null;
         PreparedStatement pstmt = null;
         Boolean result = false;
@@ -91,6 +93,8 @@ public class DBcmt {												// DB 테이블 comment 에 관한 메소드
 			
 			if (r > 0) {
 				System.out.println("Delete Successed");
+
+                System.out.println("코멘트제거");			// 콘솔 확인용
 				result = true;
 			}
 

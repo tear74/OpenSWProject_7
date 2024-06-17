@@ -21,6 +21,7 @@ public class DB {										// 전반적인 DB 메소드
 			ResultSet resultSet;
 			resultSet = metadata.getTables(null, null, "currentWeather", null);
 			if(resultSet.next()) {
+				System.out.println("이미 존재합니다.");			// 콘솔 확인용
 				DBconnect.close();
 				return;
 			}
@@ -38,8 +39,9 @@ public class DB {										// 전반적인 DB 메소드
 		String sql = "CREATE TABLE member ("			
 				+ "member_ID    VARCHAR(20) PRIMARY KEY,"
 				+ "member_PW    VARCHAR(20) NOT NULL,"
-				+ "member_Nick  VARCHAR(20),"
+				+ "member_Nick  VARCHAR(20) NOT NULL,"
 				+ "member_Email VARCHAR(30) NOT NULL,"
+				+ "member_Univ  VARCHAR(10) NOT NULL,"
 				+ "UNIQUE KEY unique_nick (member_Nick)"
 				+ ")";
 		// DB에서 생성할 회원정보 테이블
@@ -59,11 +61,13 @@ public class DB {										// 전반적인 DB 메소드
 		
 		sql = "CREATE TABLE comment ("								// 코멘트 테이블
 				+ "cmt_NO   	 INT AUTO_INCREMENT PRIMARY KEY,"	// 고유번호
-				+ "member_Nick   VARCHAR(20),"						// 코멘트를 작성한 사람의 닉네임
+				+ "member_Nick   VARCHAR(20) NOT NULL,"				// 코멘트를 작성한 사람의 닉네임
 				+ "cmt_Content	 VARCHAR(30) NOT NULL,"				// 댓글 내용
 				+ "cmt_Date		 DATE		 NOT NULL,"				// 댓글 날짜
+				+ "member_Univ   VARCHAR(10) NOT NULL,"				// 작성자 대학
 				+ "CONSTRAINT fk_comment_nick FOREIGN KEY (member_Nick)"
-				+ "			  REFERENCES member (member_Nick)"
+				+ "			REFERENCES member (member_Nick)"
+				+ "			ON DELETE CASCADE"
 				+ ")"; 				
 		// DB에서 생성할 코멘트 테이블
 
@@ -82,11 +86,13 @@ public class DB {										// 전반적인 DB 메소드
 
 		sql = "CREATE TABLE currentWeather ("						// 실제 날씨 수집 정보 테이블
 				+ "crtW_NO  	 INT AUTO_INCREMENT PRIMARY KEY,"	// 고유번호
-				+ "member_Nick   VARCHAR(20),"						// 아이콘을 누른 사람의 닉네임
+				+ "member_Nick   VARCHAR(20) 	NOT NULL,"			// 아이콘을 누른 사람의 닉네임
 				+ "crtW_Type 	 INT			NOT NULL,"			// 아이콘 타입
 				+ "crtW_Date 	 DATE			NOT NULL," 			// 날짜
+				+ "member_Univ   VARCHAR(10)	NOT NULL,"			// 작성자 대학
 				+ "CONSTRAINT fk_weather_nick FOREIGN KEY (member_Nick)"
-				+ "			  REFERENCES member (member_Nick)"
+				+ "			REFERENCES member (member_Nick)"
+				+ "			ON DELETE CASCADE"
 				+ ")"; 
 		// DB에서 생성할 날씨현황(아이콘) 테이블
 
@@ -102,6 +108,7 @@ public class DB {										// 전반적인 DB 메소드
 			DBconnect.close();
 			
 		}
+		System.out.print("생성 완료");			// 콘솔 확인용
 
 	}
 
